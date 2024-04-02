@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.guessthatcat.R
-import com.example.guessthatcat.data.MAX_NO_OF_WORDS
+import com.example.guessthatcat.data.MAX_NO_OF_CATS
 import com.example.guessthatcat.data.SCORE_INCREASE
 import com.example.guessthatcat.ui.theme.UnscrambleTheme
 
@@ -88,7 +88,7 @@ fun GameScreen(
             isGuessWrong = gameUiState.isGuessedWordWrong,
             onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
             onKeyboardDone = { gameViewModel.checkUserGuess() },
-            currentScrambledWord = gameUiState.currentScrambledWord,
+            currentCat = gameUiState.currentCat,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -113,7 +113,7 @@ fun GameScreen(
             }
 
             OutlinedButton(
-                onClick = { gameViewModel.skipWord()},
+                onClick = { gameViewModel.skip()},
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -157,7 +157,7 @@ fun GameLayout(
     onKeyboardDone: () -> Unit,
     wordCount: Int,
     isGuessWrong: Boolean,
-    currentScrambledWord: String,
+    currentCat: String,
     modifier: Modifier = Modifier
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
@@ -177,12 +177,12 @@ fun GameLayout(
                     .background(colorScheme.surfaceTint)
                     .padding(horizontal = 10.dp, vertical = 4.dp)
                     .align(alignment = Alignment.End),
-                text = stringResource(R.string.word_count, wordCount, MAX_NO_OF_WORDS),
+                text = stringResource(R.string.word_count, wordCount, MAX_NO_OF_CATS),
                 style = typography.titleMedium,
                 color = colorScheme.onPrimary
             )
             Text(
-                text = currentScrambledWord,
+                text = currentCat,
                 style = typography.displayMedium
             )
             Text(
@@ -238,7 +238,7 @@ private fun FinalScoreDialog(
             // onCloseRequest.
         },
         title = { Text(text = stringResource(R.string.congratulations)) },
-        text = { Text(text = stringResource(R.string.you_scored, score, (MAX_NO_OF_WORDS * SCORE_INCREASE))) },
+        text = { Text(text = stringResource(R.string.you_scored, score, (MAX_NO_OF_CATS * SCORE_INCREASE))) },
         modifier = modifier,
         dismissButton = {
             TextButton(

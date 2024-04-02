@@ -1,7 +1,7 @@
 package com.example.guessthatcat.ui
 
 data class GameUiState(
-    val currentScrambledWord: String = "",
+    val currentCat: String = "",
     val currentWordCount: Int = 1,
     val score: Int = 0,
     val isGuessedWordWrong: Boolean = false,
