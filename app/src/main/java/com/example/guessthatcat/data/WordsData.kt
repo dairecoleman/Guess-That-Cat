@@ -16,15 +16,14 @@
 
 package com.example.guessthatcat.data
 
-const val MAX_NO_OF_CATS = 5
+const val MAX_NO_OF_CATS = 4
 const val SCORE_INCREASE = 10
 
 // Set with all the words for the Game
-val allWords: Set<String> =
+val allCats: Set<String> =
     setOf(
         "Bb",
         "Dany",
         "Thor",
-        "Clover",
         "Shelly"
     )

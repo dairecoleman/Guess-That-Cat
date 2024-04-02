@@ -16,6 +16,7 @@
 package com.example.guessthatcat.ui
 
 import android.app.Activity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -48,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -83,12 +86,13 @@ fun GameScreen(
             style = typography.titleLarge,
         )
         GameLayout(
-            wordCount = gameUiState.currentWordCount,
+            hintCount = gameUiState.currentHintCount,
             userGuess = gameViewModel.userGuess,
             isGuessWrong = gameUiState.isGuessedWordWrong,
             onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
             onKeyboardDone = { gameViewModel.checkUserGuess() },
             currentCat = gameUiState.currentCat,
+            CurrentHint = {  },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -149,13 +153,33 @@ fun GameStatus(score: Int, modifier: Modifier = Modifier) {
         )
     }
 }
+/*depending on hint No. display the correct hint*/
+@Composable
+fun CurrentHint(hintCount: Int, currentCat: String, gameViewModel: GameViewModel = viewModel()) {
+    val gameUiState by gameViewModel.uiState.collectAsState()
+    if(hintCount == 1){
+        Image(
+            painter = painterResource(gameUiState.currentCatImage),
+            contentDescription = null,
+            modifier = Modifier.width(300.dp)
+        )
+
+    } else {
+        // display image hint
+        Text(
+            text = currentCat,
+            style = typography.displayMedium
+        )
+    }
+}
 
 @Composable
 fun GameLayout(
     userGuess: String,
     onUserGuessChanged: (String) -> Unit,
     onKeyboardDone: () -> Unit,
-    wordCount: Int,
+    hintCount: Int,
+    CurrentHint: @Composable () -> Unit,
     isGuessWrong: Boolean,
     currentCat: String,
     modifier: Modifier = Modifier
@@ -177,14 +201,12 @@ fun GameLayout(
                     .background(colorScheme.surfaceTint)
                     .padding(horizontal = 10.dp, vertical = 4.dp)
                     .align(alignment = Alignment.End),
-                text = stringResource(R.string.word_count, wordCount, MAX_NO_OF_CATS),
+                text = stringResource(R.string.word_count, hintCount, MAX_NO_OF_CATS),
                 style = typography.titleMedium,
                 color = colorScheme.onPrimary
             )
-            Text(
-                text = currentCat,
-                style = typography.displayMedium
-            )
+            /* Where the hint is displayed */
+            CurrentHint(hintCount, currentCat)
             Text(
                 text = stringResource(R.string.instructions),
                 textAlign = TextAlign.Center,

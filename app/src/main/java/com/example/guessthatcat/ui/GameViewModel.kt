@@ -4,7 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.guessthatcat.data.allWords
+import com.example.guessthatcat.R
+import com.example.guessthatcat.data.allCats
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,10 +33,14 @@ class GameViewModel : ViewModel() {
 
     fun resetGame() {
         usedWords.clear()
-        _uiState.value = GameUiState(currentCat = pickRandomWordAndShuffle())
+        _uiState.value = GameUiState(currentCat = pickRandomCat())
+        updateCurrentCatImage()
     }
 
-
+    private fun pickRandomCat(): String {
+        currentCat = allCats.random()
+        return currentCat
+    }
     fun updateUserGuess(guessedWord: String) {
         userGuess = guessedWord
     }
@@ -45,7 +50,7 @@ class GameViewModel : ViewModel() {
 
     private fun pickRandomWordAndShuffle(): String {
         // Continue picking up a new random word until you get one that hasn't been used before
-        currentCat = allWords.random()
+        currentCat = allCats.random()
         if (usedWords.contains(currentCat)) {
             return pickRandomWordAndShuffle()
         } else {
@@ -75,13 +80,13 @@ class GameViewModel : ViewModel() {
             _uiState.update { currentState ->
                 currentState.copy(isGuessedWordWrong = false)
             }
-            updateGameState()
         } else {
             // User's guess is wrong, show an error
             _uiState.update { currentState ->
                 currentState.copy(isGuessedWordWrong = true)
             }
         }
+        updateGameState()
         // Reset user guess
         updateUserGuess("")
 
@@ -98,12 +103,42 @@ class GameViewModel : ViewModel() {
                     isGameOver = true
                 )
             }
-            //Last round in the game
         } else {
             // Normal round in the game
-
+            _uiState.update { currentState ->
+                currentState.copy(
+                    currentHintCount = currentState.currentHintCount.inc(),
+                )
+            }
         }
     }
+
+    /* update cat image resource */
+    fun updateCurrentCatImage() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentCatImage = getDrawableResourceByName(_uiState.value.currentCat),
+            )
+        }
+    }
+
+    fun getDrawableResourceByName(name: String): Int {
+        return when (name) {
+            "Bb" -> R.drawable.bb
+            "Dany" -> R.drawable.dany
+            "Thor" -> R.drawable.thor
+            "Shelly" -> R.drawable.shelly
+            // Add more cases for other drawable names
+            else -> throw IllegalArgumentException("Unknown drawable name: $name")
+        }
+
+
+
+
+    }
+
+
+
 
 
     fun skip() {
